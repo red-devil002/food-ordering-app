@@ -6,3 +6,14 @@ section.hero{
     @apply grid;
     grid-template-columns: .4fr .6fr;
 }
+
+input[type="email"]:disabled,
+input[type="password"]:disabled,
+input[type="tel"]:disabled,
+input[type="text"]:disabled {
+    @apply bg-gray-300 border-0 cursor-not-allowed text-gray-500;
+}
+
+button[type="submit"]:disabled, .submit:disabled{
+    @apply cursor-not-allowed bg-red-400;
+}
