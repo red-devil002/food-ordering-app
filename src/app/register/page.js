@@ -62,11 +62,11 @@ export default function RegisterPage() {
 
                 <button type="submit" disabled={creatingUser}  className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Register</button>
                 <div className="my-4 mt-8 text-center text-gray-500">
-                    Login with provider
+                    Register with provider
                 </div>
                 <button className="flex w-full mt-8 justify-center rounded-md  px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm border border-gray-400 focus-visible:outline-offset-2 gap-4">
                     <Image src={'/google.png'} alt={'google icon'} width={24} height={24} />
-                    Login with google
+                    Register with google
                 </button>
                 <div className="text-center my-4 text-gray-500 border-t pt-4">
                     Existing account?{' '}

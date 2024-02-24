@@ -1,11 +1,16 @@
+import { User } from "/src/app/models/User";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const handler = NextAuth({
+    secret: process.env.SECRET,
     providers: [
         CredentialsProvider({
           // The name to display on the sign in form (e.g. 'Sign in with...')
           name: 'Credentials',
+          id: 'credentials',
           // The credentials is used to generate a suitable form on the sign in page.
           // You can specify whatever fields you are expecting to be submitted.
           // e.g. domain, username, password, 2FA token, etc.
@@ -21,17 +26,17 @@ const handler = NextAuth({
             // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
             // You can also use the `req` object to obtain additional parameters
             // (i.e., the request IP address)
-            const res = await fetch("/your/endpoint", {
-              method: 'POST',
-              body: JSON.stringify(credentials),
-              headers: { "Content-Type": "application/json" }
-            })
-            const user = await res.json()
-      
-            // If no error and we have user data, return it
-            if (res.ok && user) {
-              return user
+            const email = credentials?.email;
+            const password = credentials?.password;
+            
+            mongoose.connect(process.env.MONGO_URL);
+            const user = User.findOne({email});
+            const passwordOk = user && bcrypt.compareSync(password, user.password);
+
+            if (passwordOk) {
+                return user;
             }
+
             // Return null if user data could not be retrieved
             return null
           }
