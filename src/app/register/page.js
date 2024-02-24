@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import "../globals.css";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
@@ -64,7 +65,7 @@ export default function RegisterPage() {
                 <div className="my-4 mt-8 text-center text-gray-500">
                     Register with provider
                 </div>
-                <button className="flex w-full mt-8 justify-center rounded-md  px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm border border-gray-400 focus-visible:outline-offset-2 gap-4">
+                <button onClick={() => signIn('google', {callbackUrl: '/'})} className="flex w-full mt-8 justify-center rounded-md  px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm border border-gray-400 focus-visible:outline-offset-2 gap-4">
                     <Image src={'/google.png'} alt={'google icon'} width={24} height={24} />
                     Register with google
                 </button>
