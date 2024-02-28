@@ -4,12 +4,7 @@ const UserSchema = new Schema({
   name: {type: String},
   email: {type: String, required: true, unique: true},
   password: {type: String},
-  phone: {type: String},
-  department: {type: String},
-  sem: {type: String},
-  college: {type: String},
-  prn: {type: String},
-}); {timestamps: true}
+}, {timestamps: true});
 
 UserSchema.post('validate', function (user) {
     

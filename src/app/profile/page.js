@@ -1,4 +1,5 @@
 'use client'
+import UserTabs from "@/components/layout/UserTabs";
 import { useSession } from "next-auth/react"
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -12,6 +13,8 @@ export default function ProfilePage(){
     const [sem, setSem] = useState('');
     const [college, setCollege] = useState('');
     const [prn, setPRN] = useState('');
+    const [profileFetched, setProfileFetched] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const {status} = session;
     const [saved, setSaved] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -27,9 +30,10 @@ export default function ProfilePage(){
                     setSem(data.sem);
                     setCollege(data.college);
                     setPRN(data.prn);
+                    setIsAdmin(data.admin);
+                    setProfileFetched(true);
                 })
             })
-            
         }
     }, [session, status]);
 
@@ -69,7 +73,7 @@ export default function ProfilePage(){
     }
 
 
-    if (status === 'loading'){
+    if (status === 'loading' || !profileFetched){
         return 'Loading...';
     }
 
@@ -81,6 +85,7 @@ export default function ProfilePage(){
 
     return(
         <section className="mt-10">
+            <UserTabs isAdmin={isAdmin} />
             <div className="max-w-xxl mx-auto">
                 <div class="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
                     <div class="container max-w-screen-lg mx-auto">
