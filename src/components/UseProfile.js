@@ -1,3 +1,4 @@
+'use client';
 import { useEffect,useState } from "react";
 
 export function useProfile(){
@@ -6,7 +7,7 @@ export function useProfile(){
 
     useEffect(() => {
         setLoading(true);
-        fetch('api/profile').then(response => {
+        fetch('/api/profile').then(response => {
             response.json().then(data => {
                 setData(data.admin);
                 setLoading(false);

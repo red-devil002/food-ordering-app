@@ -13,9 +13,7 @@ export async function POST(req) {
 export async function PUT(req) {
     mongoose.connect(process.env.MONGO_URL);
     const {_id, name, discription} = await req.json();
-    if (await isAdmin()) {
-      await Category.updateOne({_id}, {name, discription});
-    }
+    await Category.updateOne({_id}, {name, discription});
     return Response.json(true);
   }
 
