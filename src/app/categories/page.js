@@ -1,6 +1,7 @@
 'use client';
 import { useProfile } from "@/components/UseProfile";
 import UserTabs from "@/components/layout/UserTabs";
+import DeleteButton from "@/components/menu/DeleteButton";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -56,9 +57,30 @@ export default function CategoriesPage() {
     });
   }
 
+  async function handleDeleteClick(_id) {
+    const promise = new Promise(async (resolve, reject) => {
+      const response = await fetch('/api/categories?_id='+_id, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+
+    await toast.promise(promise, {
+      loading: 'Deleting...',
+      success: 'Deleted',
+      error: 'Error',
+    });
+
+    
+    fetchCategories();
+  }
 
 
-
+    
     if (profileLoading) {
         return 'Loading...';
     }
@@ -118,21 +140,32 @@ export default function CategoriesPage() {
                 </div>
             </div>
             <div>
-                <h2 className="flex items-center justify-center mb-2 text-[40px] text-gray-600  font-bold uppercase ">Edit Categories</h2>
+                <h2 className="flex items-center justify-center mb-2 text-[40px] text-gray-600  font-bold uppercase ">Existing Categories</h2>
                 {categories?.length > 0 && categories.map(c => (
-                    <button 
-                        onClick={() => {
-                            setEditedCategory(c);
-                            setEditedDiscription(c);
-                            setCategoryName(c.name);
-                            setDiscription(c.discription);
-                        }}
-                        className="bg-gray-200 rounded-lg p-2 px-4 mb-2 flex w-full gap-1 cursor-pointer">
-                        <span>
-                            {c.name} <br/>
-                            {c.discription}
-                        </span>
+                <div
+                    key={c._id}
+                    className="bg-gray-100 rounded-xl p-2 px-4 flex gap-1 mb-1 items-center">
+                    <div className="grow">
+                    {c.name} <br/>
+                    {c.discription}
+                    </div>
+                    <div className="flex gap-1">
+                    <button type="button"
+                        className="w-full mt-4 rounded-lg px-4 py-2 border hover:bg-red-300 bg-primary text-white"
+                            onClick={() => {
+                                setEditedCategory(c);
+                                setEditedDiscription(c);
+                                setCategoryName(c.name);
+                                setDiscription(c.discription);
+                            }}
+                    >
+                        Edit
                     </button>
+                    <DeleteButton
+                        label="Delete"
+                        onDelete={() => handleDeleteClick(c._id)} />
+                    </div>
+                </div>
                 ))}
             </div>
         </section>

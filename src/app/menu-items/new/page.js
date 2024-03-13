@@ -9,7 +9,7 @@ import UserTabs from "@/components/layout/UserTabs";
 import { useProfile } from "@/components/UseProfile";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import toast from "react-hot-toast";
 
 export default function NewMenuItemPage() {
@@ -22,12 +22,22 @@ export default function NewMenuItemPage() {
     const [sizes, setSizes] = useState([]);
     const [extraingredients, setExtraIngredients] = useState([]);
     const [redirectToItems, setRedirectToItems] = useState(false);
+    const [category, setCategory] = useState([]);
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        fetch('/api/categories').then(res => {
+          res.json().then(categories => {
+            setCategories(categories);
+          });
+        });
+      }, []);
 
 
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         console.log("Image: " + image);
-        const data =  {image,name, description, basePrice,sizes, extraingredients}
+        const data =  {image,name, description,category, basePrice,sizes, extraingredients}
         const savingPromise = new Promise(async(resolve, reject) => {
             const response = await fetch('/api/menu-items', {
                 method: 'POST',
@@ -96,6 +106,13 @@ export default function NewMenuItemPage() {
                         value={description}
                         onChange={ev => setDescription(ev.target.value)}
                     />
+
+                    <label>Category</label>
+                    <select className="placeholder-transparent h-10 w-full bg-gray-200 rounded-lg border-gray-300 text-gray-900"  value={category} onChange={ev => setCategory(ev.target.value)}>
+                        {categories?.length > 0 && categories.map(c => (
+                        <option key={c._id} value={c._id}>{c.name}</option>
+                        ))}
+                    </select>
 
                     <label className="text-sm">
                         Base Price

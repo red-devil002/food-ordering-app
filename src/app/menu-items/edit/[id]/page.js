@@ -4,6 +4,7 @@ import Right from "@/components/icons/Right";
 import EditableImage from "@/components/layout/EditableImage";
 import MenuItemPriceProps from "@/components/layout/MenuItemPriceProps";
 import UserTabs from "@/components/layout/UserTabs";
+import DeleteButton from "@/components/menu/DeleteButton";
 import { useProfile } from "@/components/UseProfile";
 import Link from "next/link";
 import {redirect, useParams} from "next/navigation";
@@ -21,6 +22,8 @@ export default function NewMenuItemPage() {
     const [sizes, setSizes] = useState([]);
     const [extraingredients, setExtraIngredients] = useState([]);
     const [redirectToItems, setRedirectToItems] = useState(false);
+    const [category, setCategory] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
       fetch('/api/menu-items').then(res => {
@@ -29,6 +32,7 @@ export default function NewMenuItemPage() {
           setImage(item.image);
           setName(item.name);
           setDescription(item.description);
+          setCategory(item.category);
           setBasePrice(item.basePrice);
           setSizes(item.sizes);
           setExtraIngredients(item.extraingredients);
@@ -36,10 +40,18 @@ export default function NewMenuItemPage() {
       })
     }, []);
 
+    useEffect(() => {
+        fetch('/api/categories').then(res => {
+          res.json().then(categories => {
+            setCategories(categories);
+          });
+        });
+      }, []);
+
 
     async function handleFormSubmit(ev) {
         ev.preventDefault();
-        const data =  {image, name, description, basePrice, sizes, extraingredients, _id:id};
+        const data =  {image, name, description,category, basePrice, sizes, extraingredients, _id:id};
         const savingPromise = new Promise(async(resolve, reject) => {
             const response = await fetch('/api/menu-items', {
                 method: 'PUT',
@@ -59,6 +71,26 @@ export default function NewMenuItemPage() {
         })
         setRedirectToItems(true);
     }
+
+    async function handleDeleteClick() {
+        const promise = new Promise(async (resolve, reject) => {
+          const res = await fetch('/api/menu-items?_id='+id, {
+            method: 'DELETE',
+          });
+          if (res.ok)
+            resolve();
+          else
+            reject();
+        });
+    
+        await toast.promise(promise, {
+          loading: 'Deleting...',
+          success: 'Deleted',
+          error: 'Error',
+        });
+    
+        setRedirectToItems(true);
+      }
 
     if (redirectToItems) {
         return redirect('/menu-items');
@@ -107,6 +139,13 @@ export default function NewMenuItemPage() {
                         onChange={ev => setDescription(ev.target.value)}
                     />
 
+                    <label>Category</label>
+                    <select className="placeholder-transparent h-10 w-full bg-gray-200 rounded-lg border-gray-300 text-gray-900" value={category} onChange={ev => setCategory(ev.target.value)}>
+                        {categories?.length > 0 && categories.map(c => (
+                        <option key={c._id} value={c._id}>{c.name}</option>
+                        ))}
+                    </select>
+
                     <label className="text-sm">
                         Base Price
                     </label>
@@ -130,6 +169,10 @@ export default function NewMenuItemPage() {
                     />
 
                     <button className="bg-primary text-white w-full mt-4 hover:bg-red-300 rounded-lg px-4 py-2">Save</button>
+                    <DeleteButton
+                        label="Delete"
+                        onDelete={handleDeleteClick}
+                    />
                 </div>
             </div>
         </form>
